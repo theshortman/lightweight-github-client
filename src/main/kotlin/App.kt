@@ -8,17 +8,17 @@ import react.RState
 import react.dom.div
 import react.dom.input
 
-external interface WelcomeProps : RProps {
+external interface AppProps : RProps {
     var name: String
 }
 
-data class WelcomeState(val name: String) : RState
+data class AppState(val name: String) : RState
 
 @JsExport
-class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(props) {
+class App(props: AppProps) : RComponent<AppProps, AppState>(props) {
 
     init {
-        state = WelcomeState(props.name)
+        state = AppState(props.name)
     }
 
     override fun RBuilder.render() {
@@ -31,7 +31,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                 value = state.name
                 onChangeFunction = { event ->
                     setState(
-                        WelcomeState(name = (event.target as HTMLInputElement).value)
+                        AppState(name = (event.target as HTMLInputElement).value)
                     )
                 }
             }

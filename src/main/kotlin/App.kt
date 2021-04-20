@@ -1,40 +1,91 @@
-import kotlinx.html.InputType
-import kotlinx.html.js.onChangeFunction
-import org.w3c.dom.HTMLInputElement
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
 import react.dom.div
-import react.dom.input
+import kotlinx.coroutines.*
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.engine.js.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.http.*
+import react.*
+import kotlin.js.Date
+import kotlin.time.days
+import kotlin.time.times
 
-external interface AppProps : RProps {
-    var name: String
+
+//data class AppState(var name: String) : RState
+
+val client = HttpClient(Js) {
+    install(JsonFeature) {
+        serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        })
+    }
 }
 
-data class AppState(val name: String) : RState
+
+external interface AppState : RState {
+    var resp: GraphQLResponse?
+}
+
+
+suspend fun testGraphql(): GraphQLResponse {
+
+    return client.post() {
+        url("https://api.github.com/graphql")
+        header("Content-Type", ContentType.Application.Json)
+        header("Authorization", "bearer $GITHUB_ACCESS_TOKEN")
+        body = Query(query = repositoryQuery("ktorio", "ktor"))
+    }
+}
 
 @JsExport
-class App(props: AppProps) : RComponent<AppProps, AppState>(props) {
+class App : RComponent<RProps, AppState>() {
 
-    init {
-        state = AppState(props.name)
+//    init {
+//        state = AppState("Max")
+//    }
+
+    override fun AppState.init() {
+
+        val mainScope = MainScope()
+        mainScope.launch {
+            val graphqlResponse = testGraphql()
+            setState {
+                resp = graphqlResponse
+            }
+        }
     }
 
     override fun RBuilder.render() {
         div {
-            +"Hello, ${state.name}"
-        }
-        input {
-            attrs {
-                type = InputType.text
-                value = state.name
-                onChangeFunction = { event ->
-                    setState(
-                        AppState(name = (event.target as HTMLInputElement).value)
-                    )
+            if (state.resp == null) {
+                div {
+                    +"Loading..."
+                }
+            } else {
+                div {
+                    +"${state.resp?.data?.repository?.name}"
+                }
+                val issues = state.resp?.data?.repository?.issues
+                div {
+                    + "${issues?.totalCount} Open"
+                }
+                for (issue in issues?.nodes!!) {
+                    div {
+                        +"${issue.title} #${issue.number} ${Date(issue.createdAt).toDateString()}"
+                    }
+
+                    if (issue.labels.nodes.isNotEmpty()){
+                        for (label in issue.labels.nodes){
+                            +label.name
+                        }
+                    }
                 }
             }
         }
     }
 }
+

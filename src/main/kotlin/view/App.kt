@@ -1,3 +1,6 @@
+package view
+
+import GITHUB_ACCESS_TOKEN
 import react.dom.div
 import kotlinx.coroutines.*
 import io.ktor.client.*
@@ -6,6 +9,7 @@ import io.ktor.client.engine.js.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.http.*
+import kotlinx.css.*
 import react.*
 import services.Data
 import services.GraphQLResponse
@@ -15,7 +19,7 @@ import styled.css
 import styled.styledDiv
 
 
-//data class AppState(var name: String) : RState
+//data class view.AppState(var name: String) : RState
 
 val client = HttpClient(Js) {
     install(JsonFeature) {
@@ -30,7 +34,7 @@ val client = HttpClient(Js) {
 
 
 external interface AppState : RState {
-    var resp: GraphQLResponse?
+    var data: Data?
 }
 
 
@@ -44,11 +48,12 @@ suspend fun testGraphql(): GraphQLResponse {
     }
 }
 
+
 @JsExport
 class App : RComponent<RProps, AppState>() {
 
 //    init {
-//        state = AppState("Max")
+//        state = view.AppState("Max")
 //    }
 
     override fun AppState.init() {
@@ -57,37 +62,26 @@ class App : RComponent<RProps, AppState>() {
         mainScope.launch {
             val graphqlResponse = testGraphql()
             setState {
-                resp = graphqlResponse
+                data = graphqlResponse.data
             }
         }
     }
 
     override fun RBuilder.render() {
-        div {
-            if (state.resp == null) {
-                div {
+        styledDiv {
+            css {
+                position = Position.relative
+                paddingTop = 2.em
+                minHeight = 100.pct
+            }
+            if(state.data==null){
+                div{
                     +"Loading..."
                 }
-            } else {
-                div {
-                    +"${state.resp?.data?.repository?.name}"
-                }
-                val issues = state.resp?.data?.repository?.issues
-                div {
-                    + "${issues?.totalCount} Open"
-                }
-                for (issue in issues?.nodes!!) {
-                    div {
-                        +"${issue.title} #${issue.number} ${Date(issue.createdAt).toDateString()}"
-                    }
-
-                    if (issue.labels.nodes.isNotEmpty()){
-                        for (label in issue.labels.nodes){
-                            +label.name
-                        }
-                    }
-                }
+            }else{
+                repo { repository = state.data?.repository }
             }
+
         }
     }
 }

@@ -1,3 +1,5 @@
+package services
+
 fun repositoryQuery(owner: String, name: String) = """{
   repository(owner: "$owner", name: "$name") {
     owner{

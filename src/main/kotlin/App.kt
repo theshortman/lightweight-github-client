@@ -7,9 +7,12 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.http.*
 import react.*
-import kotlin.js.Date
-import kotlin.time.days
-import kotlin.time.times
+import services.Data
+import services.GraphQLResponse
+import services.Query
+import services.repositoryQuery
+import styled.css
+import styled.styledDiv
 
 
 //data class AppState(var name: String) : RState

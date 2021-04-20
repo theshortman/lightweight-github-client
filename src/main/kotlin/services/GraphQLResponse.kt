@@ -1,6 +1,6 @@
-import kotlinx.serialization.Serializable
-import kotlin.js.Date
+package services
 
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Query(val query: String)

@@ -8,7 +8,6 @@ import kotlinx.css.properties.textDecoration
 import kotlinx.html.ATarget
 import react.*
 import react.dom.div
-import services.Author
 import services.Label
 import styled.css
 import styled.styledA
@@ -18,7 +17,6 @@ import kotlin.js.Date
 
 external interface IssueProps : RProps {
     var title: String
-    var author: Author
     var url: String
     var number: Int
     var createdAt: String

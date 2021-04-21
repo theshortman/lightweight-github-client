@@ -29,9 +29,6 @@ data class LabelConnection(
 ) : Collection
 
 @Serializable
-data class Author(val login: String)
-
-@Serializable
 data class Owner(val login: String)
 
 interface Collection {
@@ -51,7 +48,6 @@ data class PageInfo(val endCursor: String? = null, val hasNextPage: Boolean)
 data class Issue(
     override val id: String,
     val title: String,
-    val author: Author,
     val url: String,
     val number: Int,
     val createdAt: String,

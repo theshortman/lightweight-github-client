@@ -45,7 +45,6 @@ class IssueList : RComponent<IssueListProps, RState>() {
                     key = issue.id
                     issue{
                         title = issue.title
-                        author = issue.author
                         url = issue.url
                         number = issue.number
                         createdAt = issue.createdAt

@@ -11,9 +11,6 @@ fun repositoryQuery(owner: String, name: String, endCursor:String?=null) = """{
     issues(states: [OPEN], first: 10, after: $endCursor orderBy: {field: CREATED_AT, direction: DESC}) {
       nodes {
           id
-          author {
-            login
-          }
           title
           number
           createdAt

@@ -1,5 +1,7 @@
 package services
 
+data class TrackedRepository(val owner: String, val name: String)
+
 fun repositoryQuery(owner: String, name: String) = """{
   repository(owner: "$owner", name: "$name") {
     owner{

@@ -32,6 +32,7 @@ class IssueList : RComponent<IssueListProps, RState>() {
                     borderTop(1.px, BorderStyle.solid, Color.lightGrey)
                     padding(1.em)
                 }
+                key = "issue-header"
                 +"${props.totalCount} Open"
             }
             for (issue in props.issues) {
@@ -41,6 +42,7 @@ class IssueList : RComponent<IssueListProps, RState>() {
                         borderTop(1.px, BorderStyle.solid, Color.lightGrey)
                         padding(1.em)
                     }
+                    key = issue.id
                     issue{
                         title = issue.title
                         author = issue.author

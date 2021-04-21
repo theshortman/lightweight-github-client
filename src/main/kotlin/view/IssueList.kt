@@ -54,16 +54,6 @@ class IssueList : RComponent<IssueListProps, RState>() {
                 }
             }
         }
-        styledDiv {
-            css{
-                display = Display.flex
-                justifyContent = JustifyContent.center
-            }
-            button {
-                +"Load"
-            }
-        }
-
     }
 }
 

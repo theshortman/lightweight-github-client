@@ -9,6 +9,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
+import kotlinx.html.js.onClickFunction
 import kotlinx.serialization.json.Json
 import react.*
 import react.dom.button
@@ -39,23 +40,26 @@ val client = HttpClient(Js) {
 
 external interface RepoState : RState {
     var data: Data?
+    var isLoading: Boolean
 }
 
 
-suspend fun fetchRepo(trackedRepo:TrackedRepository): GraphQLResponse {
+suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null): GraphQLResponse {
 
     return client.post() {
         url("https://api.github.com/graphql")
         header("Content-Type", ContentType.Application.Json)
         header("Authorization", "bearer $GITHUB_ACCESS_TOKEN")
         val (owner, name) = trackedRepo
-        body = Query(query = repositoryQuery(owner, name))
+        body = Query(query = repositoryQuery(owner, name, endCursor))
     }
 }
 
 @kotlin.js.ExperimentalJsExport
 @JsExport
 class Repo : RComponent<RepoProps, RepoState>() {
+
+
     override fun RepoState.init() {
 
         val mainScope = MainScope()
@@ -63,6 +67,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
             val graphqlResponse = fetchRepo(props.trackedRepo)
             setState {
                 data = graphqlResponse.data
+                isLoading = false
             }
         }
     }
@@ -82,23 +87,72 @@ class Repo : RComponent<RepoProps, RepoState>() {
                 +"${props.trackedRepo.owner}/${props.trackedRepo.name}"
             }
 
-            if (state.data == null){
-            styledDiv {
-                css{
-                    display = Display.flex
-                    justifyContent = JustifyContent.center
-                }
+            if (state.data == null) {
                 styledDiv {
-                    css{
-                        padding(80.px,0.px)
+                    css {
+                        display = Display.flex
+                        justifyContent = JustifyContent.center
                     }
-                    +"Loading..."
+                    styledDiv {
+                        css {
+                            padding(80.px, 0.px)
+                        }
+                        +"Loading..."
+                    }
                 }
-            }
-            }else {
+            } else {
                 issueList {
                     issues = state.data?.repository?.issues?.nodes!!
                     totalCount = state.data?.repository?.issues?.totalCount!!
+                }
+                if (state.data?.repository?.issues?.pageInfo?.hasNextPage!!) {
+                    styledDiv {
+                        css {
+                            display = Display.flex
+                            justifyContent = JustifyContent.center
+                        }
+
+                            button {
+                                attrs {
+                                    disabled= state.isLoading
+                                    onClickFunction = {
+                                        setState {
+                                            isLoading = true
+                                        }
+                                        val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
+                                        val oldIssues = state.data?.repository?.issues?.nodes!!
+                                        val mainScope = MainScope()
+                                        mainScope.launch {
+                                            val graphqlResponse = fetchRepo(props.trackedRepo, "\"$endCursor\"")
+                                            val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
+                                            val updatedIssue = mutableListOf<services.Issue>()
+                                            updatedIssue.addAll(oldIssues)
+                                            updatedIssue.addAll(newIssues)
+
+                                            val newData = Data(
+                                                Repository(
+                                                    graphqlResponse.data?.repository?.owner,
+                                                    graphqlResponse.data?.repository?.name,
+                                                    issues = IssueConnection(
+                                                        updatedIssue,
+                                                        graphqlResponse.data?.repository?.issues?.totalCount,
+                                                        graphqlResponse.data?.repository?.issues?.pageInfo
+                                                    )
+                                                )
+                                            )
+
+
+                                            setState {
+                                                data = newData
+                                                isLoading = false
+                                            }
+                                        }
+                                    }
+                                }
+                                +if (state.isLoading) "Loading..." else "Load"
+                            }
+                        }
+
                 }
             }
         }

@@ -33,7 +33,6 @@ external interface RepoProps : RProps {
 val client = HttpClient(Js) {
     install(JsonFeature) {
         serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
-            prettyPrint = true
             isLenient = true
             ignoreUnknownKeys = true
             coerceInputValues = true

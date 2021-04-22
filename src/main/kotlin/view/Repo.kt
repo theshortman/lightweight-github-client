@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
 import react.*
 import react.dom.button
 import react.dom.div
@@ -19,6 +20,9 @@ import styled.css
 import styled.styledDiv
 import styled.styledSpan
 import view.issueList
+
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 
 external interface RepoProps : RProps {
@@ -37,12 +41,10 @@ val client = HttpClient(Js) {
     }
 }
 
-
 external interface RepoState : RState {
     var data: Data?
     var isLoading: Boolean
 }
-
 
 suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null): GraphQLResponse {
 
@@ -50,10 +52,18 @@ suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null)
         url("https://api.github.com/graphql")
         header("Content-Type", ContentType.Application.Json)
         header("Authorization", "bearer $GITHUB_ACCESS_TOKEN")
+
         val (owner, name) = trackedRepo
-        body = Query(query = repositoryQuery(owner, name, endCursor))
+        val variables = buildJsonObject {
+            put("owner", owner)
+            put("name", name)
+            put("cursor", endCursor)
+        }
+
+        body = Query(query = REPOSITORY_QUERY, variables = variables)
     }
 }
+
 
 @ExperimentalJsExport
 class Repo : RComponent<RepoProps, RepoState>() {
@@ -111,46 +121,46 @@ class Repo : RComponent<RepoProps, RepoState>() {
                             justifyContent = JustifyContent.center
                         }
 
-                            button {
-                                attrs {
-                                    disabled= state.isLoading
-                                    onClickFunction = {
-                                        setState {
-                                            isLoading = true
-                                        }
-                                        val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
-                                        val oldIssues = state.data?.repository?.issues?.nodes!!
-                                        val mainScope = MainScope()
-                                        mainScope.launch {
-                                            val graphqlResponse = fetchRepo(props.trackedRepo, "\"$endCursor\"")
-                                            val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
-                                            val updatedIssue = mutableListOf<services.Issue>()
-                                            updatedIssue.addAll(oldIssues)
-                                            updatedIssue.addAll(newIssues)
+                        button {
+                            attrs {
+                                disabled = state.isLoading
+                                onClickFunction = {
+                                    setState {
+                                        isLoading = true
+                                    }
+                                    val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
+                                    val oldIssues = state.data?.repository?.issues?.nodes!!
+                                    val mainScope = MainScope()
+                                    mainScope.launch {
+                                        val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
+                                        val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
+                                        val updatedIssue = mutableListOf<services.Issue>()
+                                        updatedIssue.addAll(oldIssues)
+                                        updatedIssue.addAll(newIssues)
 
-                                            val newData = Data(
-                                                Repository(
-                                                    graphqlResponse.data?.repository?.owner,
-                                                    graphqlResponse.data?.repository?.name,
-                                                    issues = IssueConnection(
-                                                        updatedIssue,
-                                                        graphqlResponse.data?.repository?.issues?.totalCount,
-                                                        graphqlResponse.data?.repository?.issues?.pageInfo
-                                                    )
+                                        val newData = Data(
+                                            Repository(
+                                                graphqlResponse.data?.repository?.owner,
+                                                graphqlResponse.data?.repository?.name,
+                                                issues = IssueConnection(
+                                                    updatedIssue,
+                                                    graphqlResponse.data?.repository?.issues?.totalCount,
+                                                    graphqlResponse.data?.repository?.issues?.pageInfo
                                                 )
                                             )
+                                        )
 
 
-                                            setState {
-                                                data = newData
-                                                isLoading = false
-                                            }
+                                        setState {
+                                            data = newData
+                                            isLoading = false
                                         }
                                     }
                                 }
-                                +if (state.isLoading) "Loading..." else "Load"
                             }
+                            +if (state.isLoading) "Loading..." else "Load"
                         }
+                    }
 
                 }
             }

@@ -1,5 +1,6 @@
 package view
 
+import TrackedRepository
 import io.ktor.client.*
 import io.ktor.client.engine.js.*
 import io.ktor.client.features.json.*
@@ -10,19 +11,17 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import react.*
 import react.dom.button
-import react.dom.div
 import services.*
 import styled.css
 import styled.styledDiv
 import styled.styledSpan
-import view.issueList
 
-import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import model.*
+import model.Issue
 
 
 external interface RepoProps : RProps {
@@ -30,43 +29,14 @@ external interface RepoProps : RProps {
 
 }
 
-val client = HttpClient(Js) {
-    install(JsonFeature) {
-        serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        })
-    }
-}
 
 external interface RepoState : RState {
     var data: Data?
     var isLoading: Boolean
 }
 
-suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null): GraphQLResponse {
-
-    return client.post() {
-        url("https://api.github.com/graphql")
-        header("Content-Type", ContentType.Application.Json)
-        header("Authorization", "bearer $GITHUB_ACCESS_TOKEN")
-
-        val (owner, name) = trackedRepo
-        val variables = buildJsonObject {
-            put("owner", owner)
-            put("name", name)
-            put("cursor", endCursor)
-        }
-
-        body = Query(query = REPOSITORY_QUERY, variables = variables)
-    }
-}
-
-
 @ExperimentalJsExport
 class Repo : RComponent<RepoProps, RepoState>() {
-
 
     override fun RepoState.init() {
 
@@ -133,7 +103,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
                                     mainScope.launch {
                                         val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
                                         val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
-                                        val updatedIssue = mutableListOf<services.Issue>()
+                                        val updatedIssue = mutableListOf<Issue>()
                                         updatedIssue.addAll(oldIssues)
                                         updatedIssue.addAll(newIssues)
 

@@ -8,7 +8,7 @@ import kotlinx.css.properties.textDecoration
 import kotlinx.html.ATarget
 import react.*
 import react.dom.div
-import services.Label
+import model.Label
 import styled.css
 import styled.styledA
 import styled.styledDiv

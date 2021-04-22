@@ -3,8 +3,7 @@ package view
 import kotlinx.css.*
 import kotlinx.css.properties.*
 import react.*
-import react.dom.button
-import services.Issue
+import model.Issue
 import styled.*
 
 

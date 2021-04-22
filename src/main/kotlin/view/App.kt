@@ -1,18 +1,10 @@
 package view
 
-import react.dom.div
-import kotlinx.coroutines.*
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.engine.js.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.http.*
 import kotlinx.css.*
 import react.*
-import services.*
 import styled.css
 import styled.styledDiv
+import trackedRepositories
 
 //val client = HttpClient(Js) {
 //    install(JsonFeature) {

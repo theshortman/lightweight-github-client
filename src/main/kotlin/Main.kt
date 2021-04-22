@@ -4,6 +4,7 @@ import kotlinx.browser.window
 import view.App
 
 
+@ExperimentalJsExport
 fun main() {
     
     GlobalStyles.inject()

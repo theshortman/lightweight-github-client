@@ -55,8 +55,7 @@ suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null)
     }
 }
 
-@kotlin.js.ExperimentalJsExport
-@JsExport
+@ExperimentalJsExport
 class Repo : RComponent<RepoProps, RepoState>() {
 
 
@@ -159,6 +158,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
     }
 }
 
+@ExperimentalJsExport
 fun RBuilder.repo(handler: RepoProps.() -> Unit): ReactElement {
     return child(Repo::class) {
         this.attrs(handler)

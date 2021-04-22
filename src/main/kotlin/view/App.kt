@@ -42,8 +42,7 @@ import styled.styledDiv
 //    }
 //}
 
-@kotlin.js.ExperimentalJsExport
-@JsExport
+@ExperimentalJsExport
 class App : RComponent<RProps, RState>() {
 
     override fun RBuilder.render() {

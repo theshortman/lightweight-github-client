@@ -24,8 +24,7 @@ external interface IssueProps : RProps {
 
 }
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+@ExperimentalJsExport
 class Issue : RComponent<IssueProps, RState>() {
     override fun RBuilder.render() {
         div {
@@ -64,6 +63,7 @@ class Issue : RComponent<IssueProps, RState>() {
     }
 }
 
+@ExperimentalJsExport
 fun RBuilder.issue(handler: IssueProps.() -> Unit): ReactElement {
     return child(Issue::class) {
         this.attrs(handler)

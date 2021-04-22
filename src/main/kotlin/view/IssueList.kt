@@ -14,8 +14,7 @@ external interface IssueListProps : RProps {
 
 }
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+@ExperimentalJsExport
 class IssueList : RComponent<IssueListProps, RState>() {
     override fun RBuilder.render() {
         styledUl {
@@ -56,6 +55,7 @@ class IssueList : RComponent<IssueListProps, RState>() {
     }
 }
 
+@ExperimentalJsExport
 fun RBuilder.issueList(handler: IssueListProps.() -> Unit): ReactElement {
     return child(IssueList::class) {
         this.attrs(handler)

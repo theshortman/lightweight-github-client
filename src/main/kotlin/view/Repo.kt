@@ -68,7 +68,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
             }
 
 
-            if (state.data == null && state.errors == null)  {
+            if (state.data == null && state.errors == null) {
                 styledDiv {
                     css {
                         display = Display.flex
@@ -84,11 +84,11 @@ class Repo : RComponent<RepoProps, RepoState>() {
             } else {
                 if (state.data?.repository != null) {
                     issueList {
-                        issues = state.data?.repository?.issues?.nodes!!
-                        totalCount = state.data?.repository?.issues?.totalCount!!
+                        issues = state.data?.repository?.issues?.nodes ?: emptyList()
+                        totalCount = state.data?.repository?.issues?.totalCount ?: 0
                     }
 
-                    if (state.data?.repository?.issues?.pageInfo?.hasNextPage!!) {
+                    if (state.data?.repository?.issues?.pageInfo?.hasNextPage == true) {
                         styledDiv {
                             css {
                                 display = Display.flex
@@ -103,24 +103,25 @@ class Repo : RComponent<RepoProps, RepoState>() {
                                             isLoading = true
                                         }
                                         val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
-                                        val oldIssues = state.data?.repository?.issues?.nodes!!
+                                        val totalCount = state.data?.repository?.issues?.totalCount ?: 0
+                                        val oldIssues = state.data?.repository?.issues?.nodes ?: emptyList()
+
                                         val mainScope = MainScope()
                                         mainScope.launch {
                                             val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
-                                            val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
-                                            val updatedIssue = mutableListOf<Issue>()
-                                            updatedIssue.addAll(oldIssues)
-                                            updatedIssue.addAll(newIssues)
+                                            val newIssues =
+                                                graphqlResponse.data?.repository?.issues?.nodes ?: emptyList()
+
                                             val newData = Data(
                                                 Repository(
-                                                    issues = IssueConnection(
-                                                        updatedIssue,
-                                                        graphqlResponse.data?.repository?.issues?.totalCount,
+                                                    IssueConnection(
+                                                        oldIssues + newIssues,
+                                                        totalCount,
                                                         graphqlResponse.data?.repository?.issues?.pageInfo
+                                                            ?: PageInfo("", false)
                                                     )
                                                 )
                                             )
-
 
                                             setState {
                                                 data = newData

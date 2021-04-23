@@ -17,23 +17,15 @@ data class Repository(val issues: IssueConnection)
 
 @Serializable
 data class IssueConnection(
-    override val nodes: List<Issue>,
-    override val totalCount: Int,
-    override val pageInfo: PageInfo
-) : Collection
+    val nodes: List<Issue>? = null,
+    val totalCount: Int,
+    val pageInfo: PageInfo
+)
 
 @Serializable
 data class LabelConnection(
-    override val nodes: List<Label>,
-    override val totalCount: Int? = null,
-    override val pageInfo: PageInfo? = null
-) : Collection
-
-interface Collection {
-    val nodes: List<Node>
-    val totalCount: Int?
-    val pageInfo: PageInfo?
-}
+    val nodes: List<Label>? = null
+)
 
 interface Node {
     val id: String

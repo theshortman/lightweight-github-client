@@ -26,12 +26,13 @@ external interface RepoState : RState {
     var isLoading: Boolean
 }
 
+val mainScope = MainScope()
+
 @ExperimentalJsExport
 class RepositoryView : RComponent<RepoProps, RepoState>() {
 
     override fun RepoState.init() {
 
-        val mainScope = MainScope()
         mainScope.launch {
             val graphqlResponse = fetchRepo(props.trackedRepository)
             setState {
@@ -121,7 +122,6 @@ class RepositoryView : RComponent<RepoProps, RepoState>() {
         val totalCount = state.data?.repository?.issues?.totalCount ?: 0
         val oldIssues = state.data?.repository?.issues?.nodes ?: emptyList()
 
-        val mainScope = MainScope()
         mainScope.launch {
             val graphqlResponse = fetchRepo(props.trackedRepository, endCursor)
             val newIssues =

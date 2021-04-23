@@ -22,6 +22,7 @@ import styled.styledSpan
 import kotlinx.serialization.json.*
 import model.*
 import model.Issue
+import react.dom.div
 
 
 external interface RepoProps : RProps {
@@ -29,9 +30,9 @@ external interface RepoProps : RProps {
 
 }
 
-
 external interface RepoState : RState {
     var data: Data?
+    var errors: List<Error>?
     var isLoading: Boolean
 }
 
@@ -45,6 +46,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
             val graphqlResponse = fetchRepo(props.trackedRepo)
             setState {
                 data = graphqlResponse.data
+                errors = graphqlResponse.errors
                 isLoading = false
             }
         }
@@ -65,7 +67,8 @@ class Repo : RComponent<RepoProps, RepoState>() {
                 +"${props.trackedRepo.owner}/${props.trackedRepo.name}"
             }
 
-            if (state.data == null) {
+
+            if (state.data == null && state.errors != null)  {
                 styledDiv {
                     css {
                         display = Display.flex
@@ -79,58 +82,71 @@ class Repo : RComponent<RepoProps, RepoState>() {
                     }
                 }
             } else {
-                issueList {
-                    issues = state.data?.repository?.issues?.nodes!!
-                    totalCount = state.data?.repository?.issues?.totalCount!!
+                if (state.data?.repository != null) {
+                    issueList {
+                        issues = state.data?.repository?.issues?.nodes!!
+                        totalCount = state.data?.repository?.issues?.totalCount!!
+                    }
+
+                    if (state.data?.repository?.issues?.pageInfo?.hasNextPage!!) {
+                        styledDiv {
+                            css {
+                                display = Display.flex
+                                justifyContent = JustifyContent.center
+                            }
+
+                            button {
+                                attrs {
+                                    disabled = state.isLoading
+                                    onClickFunction = {
+                                        setState {
+                                            isLoading = true
+                                        }
+                                        val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
+                                        val oldIssues = state.data?.repository?.issues?.nodes!!
+                                        val mainScope = MainScope()
+                                        mainScope.launch {
+                                            val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
+                                            val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
+                                            val updatedIssue = mutableListOf<Issue>()
+                                            updatedIssue.addAll(oldIssues)
+                                            updatedIssue.addAll(newIssues)
+                                            val newData = Data(
+                                                Repository(
+                                                    graphqlResponse.data?.repository?.owner,
+                                                    graphqlResponse.data?.repository?.name,
+                                                    issues = IssueConnection(
+                                                        updatedIssue,
+                                                        graphqlResponse.data?.repository?.issues?.totalCount,
+                                                        graphqlResponse.data?.repository?.issues?.pageInfo
+                                                    )
+                                                )
+                                            )
+
+
+                                            setState {
+                                                data = newData
+                                                errors = graphqlResponse.errors
+                                                isLoading = false
+                                            }
+                                        }
+                                    }
+                                }
+                                +if (state.isLoading) "Loading..." else "Load"
+                            }
+                        }
+                    }
                 }
-                if (state.data?.repository?.issues?.pageInfo?.hasNextPage!!) {
+                if (state.errors != null) {
                     styledDiv {
                         css {
                             display = Display.flex
                             justifyContent = JustifyContent.center
                         }
-
-                        button {
-                            attrs {
-                                disabled = state.isLoading
-                                onClickFunction = {
-                                    setState {
-                                        isLoading = true
-                                    }
-                                    val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
-                                    val oldIssues = state.data?.repository?.issues?.nodes!!
-                                    val mainScope = MainScope()
-                                    mainScope.launch {
-                                        val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
-                                        val newIssues = graphqlResponse.data?.repository?.issues?.nodes!!
-                                        val updatedIssue = mutableListOf<Issue>()
-                                        updatedIssue.addAll(oldIssues)
-                                        updatedIssue.addAll(newIssues)
-
-                                        val newData = Data(
-                                            Repository(
-                                                graphqlResponse.data?.repository?.owner,
-                                                graphqlResponse.data?.repository?.name,
-                                                issues = IssueConnection(
-                                                    updatedIssue,
-                                                    graphqlResponse.data?.repository?.issues?.totalCount,
-                                                    graphqlResponse.data?.repository?.issues?.pageInfo
-                                                )
-                                            )
-                                        )
-
-
-                                        setState {
-                                            data = newData
-                                            isLoading = false
-                                        }
-                                    }
-                                }
-                            }
-                            +if (state.isLoading) "Loading..." else "Load"
+                        div {
+                            +"${state.errors?.joinToString(" ")}"
                         }
                     }
-
                 }
             }
         }

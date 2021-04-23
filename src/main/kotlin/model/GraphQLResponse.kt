@@ -4,7 +4,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 @Serializable
-data class GraphQLResponse(val data: Data?)
+data class GraphQLResponse(val data: Data? = null, val errors: List<Error>? = null)
+
+@Serializable
+data class Error(val message: String)
 
 @Serializable
 data class Data(val repository: Repository? = null)

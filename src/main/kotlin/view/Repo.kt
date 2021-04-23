@@ -113,8 +113,6 @@ class Repo : RComponent<RepoProps, RepoState>() {
                                             updatedIssue.addAll(newIssues)
                                             val newData = Data(
                                                 Repository(
-                                                    graphqlResponse.data?.repository?.owner,
-                                                    graphqlResponse.data?.repository?.name,
                                                     issues = IssueConnection(
                                                         updatedIssue,
                                                         graphqlResponse.data?.repository?.issues?.totalCount,

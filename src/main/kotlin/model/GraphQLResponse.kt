@@ -13,7 +13,7 @@ data class Error(val message: String)
 data class Data(val repository: Repository? = null)
 
 @Serializable
-data class Repository(val owner: Owner, val name: String, val issues: IssueConnection)
+data class Repository(val issues: IssueConnection)
 
 @Serializable
 data class IssueConnection(
@@ -28,9 +28,6 @@ data class LabelConnection(
     override val totalCount: Int? = null,
     override val pageInfo: PageInfo? = null
 ) : Collection
-
-@Serializable
-data class Owner(val login: String)
 
 interface Collection {
     val nodes: List<Node>

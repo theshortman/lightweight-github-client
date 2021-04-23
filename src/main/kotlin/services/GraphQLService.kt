@@ -8,12 +8,10 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import model.GraphQLResponse
-import model.Query
+import model.GraphQLQuery
 
 const val REPOSITORY_QUERY = """query(${'$'}owner: String!,${'$'}name: String!,${'$'}cursor: String){
   repository(owner: ${'$'}owner, name: ${'$'}name) {
@@ -69,6 +67,6 @@ suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null)
             put("cursor", endCursor)
         }
 
-        body = Query(query = REPOSITORY_QUERY, variables = variables)
+        body = GraphQLQuery(query = REPOSITORY_QUERY, variables = variables)
     }
 }

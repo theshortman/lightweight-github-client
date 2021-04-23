@@ -1,27 +1,17 @@
 package view
 
 import TrackedRepository
-import io.ktor.client.*
-import io.ktor.client.engine.js.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
-import kotlinx.serialization.json.buildJsonObject
 import react.*
 import react.dom.button
 import services.*
 import styled.css
 import styled.styledDiv
 import styled.styledSpan
-
-import kotlinx.serialization.json.*
 import model.*
-import model.Issue
 import react.dom.div
 
 

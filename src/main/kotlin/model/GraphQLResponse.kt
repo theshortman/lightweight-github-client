@@ -1,7 +1,6 @@
 package model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class GraphQLResponse(val data: Data? = null, val errors: List<Error>? = null)

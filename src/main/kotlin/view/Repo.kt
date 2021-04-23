@@ -68,7 +68,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
             }
 
 
-            if (state.data == null && state.errors != null)  {
+            if (state.data == null && state.errors == null)  {
                 styledDiv {
                     css {
                         display = Display.flex

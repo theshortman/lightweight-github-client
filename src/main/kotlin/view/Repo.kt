@@ -49,6 +49,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
                 maxWidth = 970.px
             }
             key = "${props.trackedRepo.owner}/${props.trackedRepo.name}"
+
             styledSpan {
                 css {
                     margin(0.px, .1.rem)
@@ -56,7 +57,6 @@ class Repo : RComponent<RepoProps, RepoState>() {
                 }
                 +"${props.trackedRepo.owner}/${props.trackedRepo.name}"
             }
-
 
             if (state.data == null && state.errors == null) {
                 styledDiv {
@@ -89,36 +89,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
                                 attrs {
                                     disabled = state.isLoading
                                     onClickFunction = {
-                                        setState {
-                                            isLoading = true
-                                        }
-                                        val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
-                                        val totalCount = state.data?.repository?.issues?.totalCount ?: 0
-                                        val oldIssues = state.data?.repository?.issues?.nodes ?: emptyList()
-
-                                        val mainScope = MainScope()
-                                        mainScope.launch {
-                                            val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
-                                            val newIssues =
-                                                graphqlResponse.data?.repository?.issues?.nodes ?: emptyList()
-
-                                            val newData = Data(
-                                                Repository(
-                                                    IssueConnection(
-                                                        oldIssues + newIssues,
-                                                        totalCount,
-                                                        graphqlResponse.data?.repository?.issues?.pageInfo
-                                                            ?: PageInfo("", false)
-                                                    )
-                                                )
-                                            )
-
-                                            setState {
-                                                data = newData
-                                                errors = graphqlResponse.errors
-                                                isLoading = false
-                                            }
-                                        }
+                                        onFetchMoreIssues()
                                     }
                                 }
                                 +if (state.isLoading) "Loading..." else "Load"
@@ -137,6 +108,40 @@ class Repo : RComponent<RepoProps, RepoState>() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun onFetchMoreIssues() {
+        setState {
+            isLoading = true
+        }
+
+        val endCursor = state.data?.repository?.issues?.pageInfo?.endCursor
+        val totalCount = state.data?.repository?.issues?.totalCount ?: 0
+        val oldIssues = state.data?.repository?.issues?.nodes ?: emptyList()
+
+        val mainScope = MainScope()
+        mainScope.launch {
+            val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
+            val newIssues =
+                graphqlResponse.data?.repository?.issues?.nodes ?: emptyList()
+
+            val newData = Data(
+                Repository(
+                    IssueConnection(
+                        oldIssues + newIssues,
+                        totalCount,
+                        graphqlResponse.data?.repository?.issues?.pageInfo
+                            ?: PageInfo("", false)
+                    )
+                )
+            )
+
+            setState {
+                data = newData
+                errors = graphqlResponse.errors
+                isLoading = false
             }
         }
     }

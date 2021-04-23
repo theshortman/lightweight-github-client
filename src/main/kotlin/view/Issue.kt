@@ -25,7 +25,7 @@ external interface IssueProps : RProps {
 }
 
 @ExperimentalJsExport
-class Issue : RComponent<IssueProps, RState>() {
+class IssueView : RComponent<IssueProps, RState>() {
     override fun RBuilder.render() {
         div {
             styledA(props.url, target = ATarget.blank) {
@@ -64,8 +64,8 @@ class Issue : RComponent<IssueProps, RState>() {
 }
 
 @ExperimentalJsExport
-fun RBuilder.issue(handler: IssueProps.() -> Unit): ReactElement {
-    return child(Issue::class) {
+fun RBuilder.issueView(handler: IssueProps.() -> Unit): ReactElement {
+    return child(IssueView::class) {
         this.attrs(handler)
     }
 }

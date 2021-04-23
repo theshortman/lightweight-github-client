@@ -17,7 +17,7 @@ class App : RComponent<RProps, RState>() {
                 minHeight = 100.pct
             }
             for (repo in trackedRepositories) {
-                repo { trackedRepo = repo }
+                repositoryView { trackedRepository = repo }
             }
         }
     }

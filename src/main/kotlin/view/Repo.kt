@@ -16,7 +16,7 @@ import react.dom.div
 
 
 external interface RepoProps : RProps {
-    var trackedRepo: TrackedRepository
+    var trackedRepository: TrackedRepository
 
 }
 
@@ -27,13 +27,13 @@ external interface RepoState : RState {
 }
 
 @ExperimentalJsExport
-class Repo : RComponent<RepoProps, RepoState>() {
+class RepositoryView : RComponent<RepoProps, RepoState>() {
 
     override fun RepoState.init() {
 
         val mainScope = MainScope()
         mainScope.launch {
-            val graphqlResponse = fetchRepo(props.trackedRepo)
+            val graphqlResponse = fetchRepo(props.trackedRepository)
             setState {
                 data = graphqlResponse.data
                 errors = graphqlResponse.errors
@@ -48,14 +48,14 @@ class Repo : RComponent<RepoProps, RepoState>() {
                 margin(2.em, LinearDimension.auto)
                 maxWidth = 970.px
             }
-            key = "${props.trackedRepo.owner}/${props.trackedRepo.name}"
+            key = "${props.trackedRepository.owner}/${props.trackedRepository.name}"
 
             styledSpan {
                 css {
                     margin(0.px, .1.rem)
                     fontWeight = FontWeight.bold
                 }
-                +"${props.trackedRepo.owner}/${props.trackedRepo.name}"
+                +"${props.trackedRepository.owner}/${props.trackedRepository.name}"
             }
 
             if (state.data == null && state.errors == null) {
@@ -73,7 +73,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
                 }
             } else {
                 if (state.data?.repository != null) {
-                    issueList {
+                    issueListView {
                         issues = state.data?.repository?.issues?.nodes ?: emptyList()
                         totalCount = state.data?.repository?.issues?.totalCount ?: 0
                     }
@@ -123,7 +123,7 @@ class Repo : RComponent<RepoProps, RepoState>() {
 
         val mainScope = MainScope()
         mainScope.launch {
-            val graphqlResponse = fetchRepo(props.trackedRepo, endCursor)
+            val graphqlResponse = fetchRepo(props.trackedRepository, endCursor)
             val newIssues =
                 graphqlResponse.data?.repository?.issues?.nodes ?: emptyList()
 
@@ -148,8 +148,8 @@ class Repo : RComponent<RepoProps, RepoState>() {
 }
 
 @ExperimentalJsExport
-fun RBuilder.repo(handler: RepoProps.() -> Unit): ReactElement {
-    return child(Repo::class) {
+fun RBuilder.repositoryView(handler: RepoProps.() -> Unit): ReactElement {
+    return child(RepositoryView::class) {
         this.attrs(handler)
     }
 }

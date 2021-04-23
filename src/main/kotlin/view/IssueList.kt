@@ -14,7 +14,7 @@ external interface IssueListProps : RProps {
 }
 
 @ExperimentalJsExport
-class IssueList : RComponent<IssueListProps, RState>() {
+class IssueListView : RComponent<IssueListProps, RState>() {
     override fun RBuilder.render() {
         styledUl {
             css {
@@ -41,7 +41,7 @@ class IssueList : RComponent<IssueListProps, RState>() {
                         padding(1.em)
                     }
                     key = issue.id
-                    issue{
+                    issueView{
                         title = issue.title
                         url = issue.url
                         number = issue.number
@@ -55,8 +55,8 @@ class IssueList : RComponent<IssueListProps, RState>() {
 }
 
 @ExperimentalJsExport
-fun RBuilder.issueList(handler: IssueListProps.() -> Unit): ReactElement {
-    return child(IssueList::class) {
+fun RBuilder.issueListView(handler: IssueListProps.() -> Unit): ReactElement {
+    return child(IssueListView::class) {
         this.attrs(handler)
     }
 }

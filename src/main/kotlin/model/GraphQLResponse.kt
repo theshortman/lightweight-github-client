@@ -40,7 +40,7 @@ data class Issue(
     val url: String,
     val number: Int,
     val createdAt: String,
-    val labels: LabelConnection
+    val labels: LabelConnection?=null
 ) : Node
 
 @Serializable

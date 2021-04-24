@@ -46,7 +46,7 @@ class IssueListView : RComponent<IssueListProps, RState>() {
                         url = issue.url
                         number = issue.number
                         createdAt = issue.createdAt
-                        labels = issue.labels.nodes ?: emptyList()
+                        labels = issue.labels?.nodes ?: emptyList()
                     }
                 }
             }

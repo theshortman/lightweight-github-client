@@ -1,6 +1,5 @@
 package view
 
-import TrackedRepository
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
@@ -16,7 +15,7 @@ import react.dom.div
 
 
 external interface RepoProps : RProps {
-    var trackedRepository: TrackedRepository
+    var trackedRepository: String
 
 }
 
@@ -49,14 +48,14 @@ class RepositoryView : RComponent<RepoProps, RepoState>() {
                 margin(2.em, LinearDimension.auto)
                 maxWidth = 970.px
             }
-            key = "${props.trackedRepository.owner}/${props.trackedRepository.name}"
+            key = props.trackedRepository
 
             styledSpan {
                 css {
                     margin(0.px, .1.rem)
                     fontWeight = FontWeight.bold
                 }
-                +"${props.trackedRepository.owner}/${props.trackedRepository.name}"
+                +props.trackedRepository
             }
 
             if (state.data == null && state.errors == null) {

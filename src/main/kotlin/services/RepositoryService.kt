@@ -1,7 +1,6 @@
 package services
 
 import GITHUB_ACCESS_TOKEN
-import TrackedRepository
 import io.ktor.client.*
 import io.ktor.client.engine.js.*
 import io.ktor.client.features.json.*
@@ -49,14 +48,14 @@ val client = HttpClient(Js) {
     }
 }
 
-suspend fun fetchRepo(trackedRepo: TrackedRepository, endCursor: String? = null): GraphQLResponse {
+suspend fun fetchRepo(trackedRepository: String, endCursor: String? = null): GraphQLResponse {
 
     return client.post() {
         url("https://api.github.com/graphql")
         header("Content-Type", ContentType.Application.Json)
         header("Authorization", "bearer $GITHUB_ACCESS_TOKEN")
 
-        val (owner, name) = trackedRepo
+        val (owner, name) = trackedRepository.split("/")
         val variables = buildJsonObject {
             put("owner", owner)
             put("name", name)

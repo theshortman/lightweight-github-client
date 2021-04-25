@@ -3,7 +3,6 @@ plugins {
     kotlin("plugin.serialization") version "1.4.31"
 }
 
-group = "me.iam"
 version = "1.0-SNAPSHOT"
 
 repositories {

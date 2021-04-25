@@ -11,8 +11,6 @@ import styled.css
 import styled.styledDiv
 import styled.styledSpan
 import model.*
-import react.dom.div
-
 
 external interface RepoProps : RProps {
     var trackedRepository: String
@@ -87,14 +85,8 @@ class RepositoryView : RComponent<RepoProps, RepoState>() {
                     }
                 }
                 if (state.errors != null) {
-                    styledDiv {
-                        css {
-                            display = Display.flex
-                            justifyContent = JustifyContent.center
-                        }
-                        div {
-                            +"${state.errors?.joinToString(" ")}"
-                        }
+                    errorsView {
+                        errorMessages = state.errors?.map { it.message } ?: emptyList()
                     }
                 }
             }

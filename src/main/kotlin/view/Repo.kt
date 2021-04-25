@@ -59,18 +59,7 @@ class RepositoryView : RComponent<RepoProps, RepoState>() {
             }
 
             if (state.data == null && state.errors == null) {
-                styledDiv {
-                    css {
-                        display = Display.flex
-                        justifyContent = JustifyContent.center
-                    }
-                    styledDiv {
-                        css {
-                            padding(80.px, 0.px)
-                        }
-                        +"Loading..."
-                    }
-                }
+                loadingView()
             } else {
                 if (state.data?.repository != null) {
                     issueListView {

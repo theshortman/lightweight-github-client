@@ -3,7 +3,6 @@ package view
 import kotlinx.css.*
 import model.Error
 import react.*
-import react.dom.div
 import styled.css
 import styled.styledDiv
 
@@ -20,7 +19,10 @@ class ErrorsView : RComponent<ErrorsProps, RState>() {
                     display = Display.flex
                     justifyContent = JustifyContent.center
                 }
-                div {
+                styledDiv {
+                    css{
+                        marginTop = 10.px
+                    }
                     +props.errorMessages.joinToString(" ")
                 }
             }

@@ -30,5 +30,5 @@ It starts server on [http://localhost:8080](http://localhost:8080).
 
 All contributions are welcome.
 
-[CONTRIBUTING.md](https://github.com/theshortman/lightweight-github-client/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/theshortman/lightweight-github-client/blob/master/CONTRIBUTING.md)
 

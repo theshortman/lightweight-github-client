@@ -31,6 +31,9 @@ const val REPOSITORY_QUERY = """query(${'$'}owner: String!,${'$'}name: String!,$
                 color
             }
           }
+          comments{
+              totalCount
+            }
       }
       totalCount
       pageInfo {

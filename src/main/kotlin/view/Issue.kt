@@ -21,6 +21,7 @@ external interface IssueProps : RProps {
     var number: Int
     var createdAt: String
     var labels: List<Label>
+    var commentsTotalCount: Int
 
 }
 
@@ -34,7 +35,7 @@ class IssueView : RComponent<IssueProps, RState>() {
                     textDecoration = TextDecoration.none
                     marginRight = 3.px
                     color = Color.black
-                    wordBreak=WordBreak.breakWord
+                    wordBreak = WordBreak.breakWord
                     hover { textDecoration(TextDecorationLine.underline) }
                 }
                 +props.title
@@ -48,7 +49,7 @@ class IssueView : RComponent<IssueProps, RState>() {
                         marginTop = 5.px
                         marginRight = 5.px
                         borderRadius = 5.px
-                        border(2.px,BorderStyle.solid,color = Color("#${label.color}"))
+                        border(2.px, BorderStyle.solid, color = Color("#${label.color}"))
                     }
                     +label.name
                 }
@@ -62,6 +63,13 @@ class IssueView : RComponent<IssueProps, RState>() {
             }
             val date = Date(props.createdAt)
             +"#${props.number} opened on ${date.toDateString().dropWhile { it != ' ' }}"
+        }
+        styledDiv {
+            css {
+                marginTop = 5.px
+                color = Color.grey
+            }
+            +"Comments ${props.commentsTotalCount}"
         }
     }
 }

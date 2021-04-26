@@ -40,8 +40,12 @@ data class Issue(
     val url: String,
     val number: Int,
     val createdAt: String,
-    val labels: LabelConnection?=null
+    val labels: LabelConnection? = null,
+    val comments: IssueCommentConnection
 ) : Node
+
+@Serializable
+data class IssueCommentConnection(val totalCount: Int)
 
 @Serializable
 data class Label(override val id: String, val name: String, val color: String) : Node

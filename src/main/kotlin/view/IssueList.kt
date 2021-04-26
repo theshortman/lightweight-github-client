@@ -47,6 +47,7 @@ class IssueListView : RComponent<IssueListProps, RState>() {
                         number = issue.number
                         createdAt = issue.createdAt
                         labels = issue.labels?.nodes ?: emptyList()
+                        commentsTotalCount = issue.comments.totalCount
                     }
                 }
             }

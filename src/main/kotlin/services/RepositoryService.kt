@@ -9,7 +9,6 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.utils.io.*
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import model.GraphQLResponse

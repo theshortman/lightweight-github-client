@@ -34,6 +34,7 @@ class IssueView : RComponent<IssueProps, RState>() {
                     textDecoration = TextDecoration.none
                     marginRight = 3.px
                     color = Color.black
+                    wordBreak=WordBreak.breakWord
                     hover { textDecoration(TextDecorationLine.underline) }
                 }
                 +props.title

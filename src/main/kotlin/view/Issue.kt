@@ -45,6 +45,7 @@ class IssueView : RComponent<IssueProps, RState>() {
                     css {
                         display = Display.inlineBlock
                         padding(4.px)
+                        marginTop = 5.px
                         marginRight = 5.px
                         borderRadius = 5.px
                         border(2.px,BorderStyle.solid,color = Color("#${label.color}"))
@@ -56,6 +57,7 @@ class IssueView : RComponent<IssueProps, RState>() {
         }
         styledDiv {
             css {
+                marginTop = 5.px
                 color = Color.grey
             }
             val date = Date(props.createdAt)

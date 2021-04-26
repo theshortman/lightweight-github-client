@@ -13,7 +13,7 @@ class App : RComponent<RProps, RState>() {
         styledDiv {
             css {
                 position = Position.relative
-                paddingTop = 2.em
+                margin(15.px)
                 minHeight = 100.pct
             }
             for (repo in trackedRepositories) {

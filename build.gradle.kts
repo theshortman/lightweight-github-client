@@ -6,17 +6,15 @@ plugins {
 version = "1.0-SNAPSHOT"
 
 repositories {
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
-    maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
-    mavenCentral()
     jcenter()
+    mavenCentral()
+    maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers") }
 }
 
 dependencies {
-    implementation("org.jetbrains:kotlin-react:17.0.1-pre.148-kotlin-1.4.21")
-    implementation("org.jetbrains:kotlin-react-dom:17.0.1-pre.148-kotlin-1.4.21")
-
-    implementation("org.jetbrains:kotlin-styled:5.2.1-pre.148-kotlin-1.4.21")
+    implementation("org.jetbrains:kotlin-react:17.0.1-pre.148-kotlin-1.4.30")
+    implementation("org.jetbrains:kotlin-react-dom:17.0.1-pre.148-kotlin-1.4.30")
+    implementation("org.jetbrains:kotlin-styled:5.2.1-pre.148-kotlin-1.4.30")
 
     val ktorVersion= "1.5.3"
     implementation("io.ktor:ktor-client-core:$ktorVersion")

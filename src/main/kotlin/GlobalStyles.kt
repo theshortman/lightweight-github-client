@@ -13,8 +13,6 @@ object GlobalStyles {
                 height = 100.pct
                 margin(0.px)
                 padding(0.px)
-                marginTop = 0.px
-                marginBottom = 0.px
             }
         }
 

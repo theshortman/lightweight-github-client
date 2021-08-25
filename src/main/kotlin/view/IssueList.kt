@@ -20,6 +20,7 @@ class IssueListView : RComponent<IssueListProps, RState>() {
             css {
                 fontSize = .9.rem
                 border(1.px, BorderStyle.solid, Color.lightSlateGrey)
+                borderTopWidth = 0.px
                 borderRadius = 4.px
                 listStyleType = ListStyleType.none
                 padding(0.px)
